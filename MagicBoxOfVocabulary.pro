@@ -13,17 +13,20 @@ SOURCES += \
     databaseoperation.cpp \
     main.cpp \
     mainwindow.cpp \
+    memorytestbyfillrandomblank.cpp \
     vocabularydatabase.cpp \
     wordcard.cpp
 
 HEADERS += \
     databaseoperation.h \
     mainwindow.h \
+    memorytestbyfillrandomblank.h \
     vocabularydatabase.h \
     wordcard.h
 
 FORMS += \
     mainwindow.ui \
+    memorytestbyfillrandomblank.ui \
     wordcard.ui
 
 # Default rules for deployment.
