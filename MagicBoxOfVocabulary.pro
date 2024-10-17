@@ -14,6 +14,8 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     memorytestbyfillrandomblank.cpp \
+    userlogin.cpp \
+    userregistration.cpp \
     vocabularydatabase.cpp \
     wordcard.cpp
 
@@ -21,15 +23,22 @@ HEADERS += \
     databaseoperation.h \
     mainwindow.h \
     memorytestbyfillrandomblank.h \
+    userlogin.h \
+    userregistration.h \
     vocabularydatabase.h \
     wordcard.h
 
 FORMS += \
     mainwindow.ui \
     memorytestbyfillrandomblank.ui \
+    userlogin.ui \
+    userregistration.ui \
     wordcard.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+RESOURCES += \
+    picture.qrc

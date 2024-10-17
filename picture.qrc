@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/picture/icon">
+        <file>resource/word.png</file>
+        <file>resource/user_avatar_default.png</file>
+        <file>resource/star.png</file>
+    </qresource>
+</RCC>

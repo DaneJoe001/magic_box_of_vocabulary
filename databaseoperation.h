@@ -12,6 +12,8 @@ class DatabaseOperation : public QObject
 public:
     explicit DatabaseOperation(QObject *parent = nullptr);
 
+    //返回私有成员QSqlDatabase对象database;
+    //TODO:考虑是否改为公有成员
     QSqlDatabase returnDatabase();
 
 signals:

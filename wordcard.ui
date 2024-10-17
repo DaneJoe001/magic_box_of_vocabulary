@@ -25,6 +25,10 @@
   <property name="windowTitle">
    <string>单词卡</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="picture.qrc">
+    <normaloff>:/picture/icon/resource/word.png</normaloff>:/picture/icon/resource/word.png</iconset>
+  </property>
   <widget class="QCheckBox" name="StarWord">
    <property name="geometry">
     <rect>
@@ -46,7 +50,7 @@
     <rect>
      <x>40</x>
      <y>30</y>
-     <width>261</width>
+     <width>311</width>
      <height>241</height>
     </rect>
    </property>
@@ -384,6 +388,8 @@
    </property>
   </widget>
  </widget>
- <resources/>
+ <resources>
+  <include location="picture.qrc"/>
+ </resources>
  <connections/>
 </ui>

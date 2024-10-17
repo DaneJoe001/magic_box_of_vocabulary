@@ -7,13 +7,17 @@
     <x>0</x>
     <y>0</y>
     <width>640</width>
-    <height>480</height>
+    <height>155</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>单词拼写测试</string>
   </property>
-  <widget class="QWidget" name="">
+  <property name="windowIcon">
+   <iconset resource="picture.qrc">
+    <normaloff>:/picture/icon/resource/word.png</normaloff>:/picture/icon/resource/word.png</iconset>
+  </property>
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>1</x>
@@ -429,6 +433,8 @@
    </layout>
   </widget>
  </widget>
- <resources/>
+ <resources>
+  <include location="picture.qrc"/>
+ </resources>
  <connections/>
 </ui>
