@@ -420,7 +420,7 @@ background-color: rgb(212, 212, 212);</string>
       </widget>
       <widget class="QWidget" name="pageWordManage">
        <property name="enabled">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout_13" stretch="0">
         <property name="spacing">
@@ -440,6 +440,9 @@ background-color: rgb(212, 212, 212);</string>
         </property>
         <item>
          <widget class="QWidget" name="widget_2" native="true">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
           <layout class="QVBoxLayout" name="verticalLayout_9">
            <item>
             <spacer name="verticalSpacer_18">
@@ -493,6 +496,13 @@ background-color: rgb(212, 212, 212);</string>
                </property>
               </widget>
              </item>
+             <item>
+              <widget class="QPushButton" name="TableRefresh">
+               <property name="text">
+                <string>刷新列表</string>
+               </property>
+              </widget>
+             </item>
             </layout>
            </item>
            <item>
@@ -514,10 +524,30 @@ color: rgb(255, 255, 255);</string>
              <item>
               <layout class="QVBoxLayout" name="verticalLayout_8">
                <item>
-                <widget class="QTableView" name="tableView"/>
+                <widget class="QTableWidget" name="tableWidget">
+                 <property name="verticalScrollBarPolicy">
+                  <enum>Qt::ScrollBarAlwaysOn</enum>
+                 </property>
+                 <property name="horizontalScrollBarPolicy">
+                  <enum>Qt::ScrollBarAlwaysOn</enum>
+                 </property>
+                 <property name="sizeAdjustPolicy">
+                  <enum>QAbstractScrollArea::AdjustToContents</enum>
+                 </property>
+                 <property name="cornerButtonEnabled">
+                  <bool>false</bool>
+                 </property>
+                </widget>
                </item>
                <item>
                 <layout class="QHBoxLayout" name="horizontalLayout_15">
+                 <item>
+                  <widget class="QLabel" name="WordQuantity">
+                   <property name="text">
+                    <string>单词数量：</string>
+                   </property>
+                  </widget>
+                 </item>
                  <item>
                   <widget class="QPushButton" name="pushButton_6">
                    <property name="text">

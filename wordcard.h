@@ -71,7 +71,7 @@ private:
     VocabularyDatabase wordDatabase;
 
     //创建单词拼写测试对象；
-    MemoryTestByFillRandomBlank test1;
+    //MemoryTestByFillRandomBlank test1;
 };
 
 #endif // WORDCARD_H

@@ -7,6 +7,7 @@ VocabularyDatabase::VocabularyDatabase()
     initAllWordInfo();
     //初始化单词合集列表；
     initCollectionList();
+
 }
 
 void VocabularyDatabase::initAllWordInfo()
@@ -52,8 +53,20 @@ void VocabularyDatabase::initCollectionList()
         collection.wordQuantity=sql.value(2).toUInt();
         collection.tableName=sql.value(3).toString();
         //初始化单词合集列表序号；
-        initWordList(collection);
+        initWordList(&collection);
+        qDebug()<<"initCollectionList:"
+                 <<collection.collectionName
+                 <<collection.wordIdList.size();
         collectionList.append(collection);
+    }
+    for(quint32 i=0;i<listQuantity;i++)
+    {
+        if(collectionList[i].collectionID==collection.collectionID)
+        {
+            collectionList[i]=collection;
+            //TODO:内存管理；
+            return;
+        }
     }
     //获取单词合集数量；
     listQuantity=collectionList.size();
@@ -61,11 +74,23 @@ void VocabularyDatabase::initCollectionList()
 
 }
 
-void VocabularyDatabase::initWordList(WordCollectionInfo collection)
+void VocabularyDatabase::initWordList(WordCollectionInfo* collection)
 {
     QSqlQuery sql=QSqlQuery(database);
+    QString sqlStatement=QString("select * from collection_info where table_name='%1'");
+//    if(sql.exec(sqlStatement)==false)
+//    {
+//        qDebug()<<"Sql query failed!";
+//        return;
+//    }
+//    quint32 collectionID=0;
+//    if(sql.next()==true)
+//    {
+//        collectionID=sql.value(0).toUInt();
+//    }
     //根据表名查询对应数据并存储；
-    QString sqlStatement=QString("select * from %1;").arg(collection.tableName);
+    sqlStatement.clear();
+    sqlStatement=QString("select * from %1;").arg(collection->tableName);
     qDebug()<<sqlStatement;
     if(sql.exec(sqlStatement)==false)
     {
@@ -77,8 +102,9 @@ void VocabularyDatabase::initWordList(WordCollectionInfo collection)
     while(sql.next()==true)
     {
         wordID=sql.value(0).toUInt();
-        collection.wordIdList.append(wordID);
+        collection->wordIdList.append(wordID);
     }
+    collection->wordQuantity=collection->wordIdList.size();
 }
 
 qint32 VocabularyDatabase::searchCollection(QString tableName)
@@ -99,6 +125,29 @@ qint32 VocabularyDatabase::searchCollection(QString tableName)
     {
         //将位置数据更新为下标；
         index=sql.value(0).toInt()-1;
+    }
+    return index;
+}
+
+qint32 VocabularyDatabase::searchCollectionByCollectionName(QString collectionName)
+{
+    //查询单词数据表位序；
+    qint32 index=-1;
+    QSqlQuery sql=QSqlQuery(database);
+    QString sqlStatement =
+        QString("SELECT list_id FROM collection_info WHERE collection_name='%1'").
+        arg(collectionName);
+    qDebug()<<sqlStatement;
+    if(sql.exec(sqlStatement)==false)
+    {
+        qDebug() << "SQL query failed: " << sql.lastError().text();
+        return -1;
+    }
+    if(sql.next()==true)
+    {
+        //将位置数据更新为下标；
+        index=sql.value(0).toInt()-1;
+        qDebug()<<"Collection:"<<index;
     }
     return index;
 }
@@ -162,6 +211,15 @@ bool VocabularyDatabase::addWordToCollection(WordCollectionInfo collection, Word
         //TODO:show tip information on ui;
         return false;
     }
+    collection.wordQuantity++;
+    sqlStatement=QString("UPDATE collection_info SET word_quantity = %1 WHERE table_name = '%2';").
+                   arg(collection.wordQuantity).
+                   arg(collection.tableName);
+    qDebug()<<sqlStatement;
+    if(!sql.exec(sqlStatement))
+    {
+        qDebug()<<"Update error!";
+    }
     return true;
 }
 
@@ -195,6 +253,15 @@ bool VocabularyDatabase::removeWordFromCollection(WordCollectionInfo collection,
                  << ": " << sql.lastError().text();
         //TODO:show tip information on ui;
         return false;
+    }
+    collection.wordQuantity--;
+    sqlStatement=QString("UPDATE collection_info SET word_quantity = %1 WHERE table_name = '%2';").
+                   arg(collection.wordQuantity).
+                   arg(collection.tableName);
+    qDebug()<<sqlStatement;
+    if(!sql.exec(sqlStatement))
+    {
+        qDebug()<<"Update error!";
     }
     return true;
 }

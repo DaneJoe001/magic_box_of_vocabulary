@@ -9,9 +9,11 @@ WordCard::WordCard(QWidget *parent) :
 {
     ui->setupUi(this);
     wordCardPanelManage();
+    //设置单词卡当前展示位序
     currentIndex=0;
+    //初始化单词数据；
     initDataList(wordDatabase.allWords);
-    //Init first word;
+    //显示单词卡默认单词
     showWordCard(wordList[0]);
 }
 
@@ -50,6 +52,7 @@ void WordCard::showNext()
 
 void WordCard::showWordCard(WordInfo word)
 {
+    //显示对应单词的基本内容；
     if(currentIndex>wordQuantity-1)
     {
         qDebug()<<"Invailed index!";
@@ -129,8 +132,9 @@ void WordCard::on_StarWord_stateChanged(int arg1)
 void WordCard::on_MemoryCheck_clicked()
 {
     //this->hide();
+    MemoryTestByFillRandomBlank test1;
     test1.word=wordList[currentIndex];
     test1.setDestWord();
-    test1.show();
+    test1.exec();
 }
 

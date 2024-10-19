@@ -1,16 +1,17 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QMainWindow>
-#include <QStringListModel>
 #include <QObject>
 #include <QListWidget>
+#include <QMainWindow>
 #include <QListWidgetItem>
+#include <QStringListModel>
 #include <QStandardItemModel>
 
 #include "userlogin.h"
 #include "vocabularydatabase.h"
 #include "memorytestbyfillrandomblank.h"
+#include "wordcard.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -26,6 +27,9 @@ public:
 
     //提供接口，设置单词查询界面单词列表
     void initDataList(QList<WordInfo> temp);
+
+    //单词序号列表设置查询界面单词列表
+    void initByCollection(WordCollectionInfo collectionInfo);
 
     //切换上一个单词信息
     void showPrev();
@@ -51,6 +55,9 @@ public:
     //从指定单词合集移除单词
     bool removeWordFromCollecting(WordCollectionInfo collection);
 
+    //设置单词表格；
+    void setWordTable();
+
 private slots:
     //退出按钮
     void on_pushButton_clicked();
@@ -72,6 +79,15 @@ private slots:
 
     //收藏复选框
     void on_StarWord_stateChanged(int arg1);
+
+    //表格点击事件；
+    void onCellClicked(int row, int column);
+
+    //合集列表点击事件
+    void listItemClicked(QListWidgetItem *item);
+
+    //表格刷新按钮
+    void on_TableRefresh_clicked();
 
 private:
     Ui::MainWindow *ui;
@@ -101,6 +117,13 @@ private:
     VocabularyDatabase wordDatabase;
 
     //设置单词拼写测试对象；
-    MemoryTestByFillRandomBlank test1;
+    //MemoryTestByFillRandomBlank test1;
+
+    //设置表格单词内容
+    QList<WordInfo> showWordList;
+
+    //创建单词卡对象
+    WordCard wordCard;
+
 };
 #endif // MAINWINDOW_H

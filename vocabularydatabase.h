@@ -56,10 +56,13 @@ public:
     //初始化合集列表
     void initCollectionList();
     //初始化单词列表
-    void initWordList(WordCollectionInfo collection);
+    void initWordList(WordCollectionInfo* collection);
 
-    //查询单词合集，并返回单词合集序号
+    //通过表名查询单词合集，并返回单词合集序号
     qint32 searchCollection(QString tableName);
+
+    //通过合集名查询单词合集，并返回单词合集序号
+    qint32 searchCollectionByCollectionName(QString collectionName);
 
     //判断单词是否位于某合集
     bool isExistInCollection(WordCollectionInfo collection,WordInfo word);
