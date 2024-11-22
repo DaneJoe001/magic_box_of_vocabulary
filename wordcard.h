@@ -1,5 +1,5 @@
-#ifndef WORDCARD_H
-#define WORDCARD_H
+#ifndef WordCard_H
+#define WordCard_H
 
 #include <QDialog>
 #include "vocabularydatabase.h"
@@ -16,27 +16,32 @@ class WordCard : public QDialog
 public:
     explicit WordCard(QWidget *parent = nullptr);
     ~WordCard();
+    //表格任意位置单击显示的单词卡
+    void tableWordCard(WordInfo word ,quint32 srcIndex);
 
     //初始化单词列表
-    void initDataList(QList<WordInfo> temp);
+    void init_data_list(QList<WordInfo> temp);
+
+    //单词序号列表设置查询界面单词列表
+    void init_by_collection(WordCollectionInfo collectionInfo);
 
     //切换上一张图片
-    void showPrev();
+    void show_prev();
 
     //切换下一片图片
-    void showNext();
+    void show_next();
 
     //用单词卡展示单词信息；
-    void showWordCard(WordInfo word);
+    void show_WordCard(WordInfo word);
 
     //向指定合集添加单词；
-    bool addWordToCollecting(WordCollectionInfo collection);
+    bool add_word_to_collection(WordCollectionInfo collection);
 
     //从指定集合移除单词；
-    bool removeWordFromCollecting(WordCollectionInfo collection);
+    bool remove_word_from_collection(WordCollectionInfo collection);
 
     //响应单词卡界面按钮；
-    void wordCardPanelManage();
+    void WordCard_panel_manage();
 
     //初始化测试数据；
     void testDataInit();
@@ -56,22 +61,22 @@ private:
     Ui::WordCard *ui;
 
     //记录当前展示单词下标；
-    quint32 currentIndex;
+    qint32 current_index;
 
     //当前列表最大下标；
-    quint32 maxIndex;
+    qint32 max_index;
 
     //当前列表单词数量；
-    quint32 wordQuantity;
+    quint32 word_quantity;
 
     //当前单词列表
-    QList<WordInfo> wordList;
+    QList<WordInfo> word_list;
 
     //创建单词数据库对象；
-    VocabularyDatabase wordDatabase;
+    VocabularyDatabase word_database;
 
     //创建单词拼写测试对象；
-    //MemoryTestByFillRandomBlank test1;
+    MemoryTestByFillRandomBlank test1;
 };
 
-#endif // WORDCARD_H
+#endif // WordCard_H

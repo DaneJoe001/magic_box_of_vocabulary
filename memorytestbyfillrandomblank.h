@@ -30,14 +30,14 @@ public:
     ~MemoryTestByFillRandomBlank();
 
     //设置当前序号标签字母；
-    void setWordLabel(QChar letter);
+    void set_word_label(QChar letter);
 
     //获取设置目标单词长度
-    void setDestWord();
+    void set_dest_word();
 
     //检查填写情况；
-    bool checkAnswer();
-    void clearLabel();
+    bool check_answer();
+    void clear_label();
 
     // 重写 eventFilter() 方法
     bool eventFilter(QObject *obj, QEvent *event) override
@@ -64,14 +64,19 @@ protected:
     //重写事件监听，键盘字母输入；
     void keyPressEvent(QKeyEvent *event) override;
 
+    void closeEvent(QCloseEvent *event) override;
+
+signals:
+    void windowClosed();
+
 private:
     Ui::MemoryTestByFillRandomBlank *ui;
 
     //当前填充位置；
-    quint32 fillPosition;
+    quint32 fill_position;
 
     //当前单词长度；
-    quint32 recentWordLength;
+    quint32 recent_word_length;
 
     //label标签组
     QList<QLabel*> labels;

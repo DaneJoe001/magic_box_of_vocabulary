@@ -28,7 +28,7 @@ private:
     Ui::UserRegistration *ui;
 
     //创建数据库操作对象；
-    DatabaseOperation databaseOperation;
+    QSqlDatabase database;
 
     //新用户信息；
     UserInfo newUser;

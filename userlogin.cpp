@@ -8,7 +8,7 @@ UserLogin::UserLogin(QWidget *parent) :
 {
     ui->setupUi(this);
     //获取数据库对象；
-    database=databaseOperation.returnDatabase();
+    database=DatabaseManager::get_database("basic_database");
 }
 
 UserLogin::~UserLogin()
@@ -16,11 +16,11 @@ UserLogin::~UserLogin()
     delete ui;
 }
 
-bool UserLogin::checkLoginStatus()
+bool UserLogin::check_login_status()
 {
     QSqlQuery sql=QSqlQuery(database);
     //在数据库查询对应账号信息；
-    QString sqlStatement=QString("select * from user_info where user_account='%1';").arg(userAccount);
+    QString sqlStatement=QString("select * from user_info where user_account='%1';").arg(user_account);
     if(!sql.exec(sqlStatement))
     {
         qDebug()<<"Sql query failed!";
@@ -29,20 +29,20 @@ bool UserLogin::checkLoginStatus()
     //未查询到结果即返回；
     if(!sql.next())
     {
-        qDebug()<<QString("Not found user %1!").arg(userAccount);
+        qDebug()<<QString("Not found user %1!").arg(user_account);
         return false;
     }
-    currentUser.userPassword=sql.value(2).toString();
+    current_user.user_password=sql.value(2).toString();
     //检查密码是否正确，正确则填充当前用户信息；
-    if(currentUser.userPassword==userPassword)
+    if(current_user.user_password==user_password)
     {
-        currentUser.userID=sql.value(0).toUInt();
-        currentUser.userAccount=userAccount;
-        currentUser.userNickName=sql.value(3).toString();
-        currentUser.userAvatar=sql.value(4).toString();
-        currentUser.registrationTime=sql.value(5).toDateTime();
-        currentUser.lastLoginTime=QDateTime::currentDateTime();
-        updateLoginTime();
+        current_user.user_ID=sql.value(0).toUInt();
+        current_user.user_account=user_account;
+        current_user.user_nick_name=sql.value(3).toString();
+        current_user.user_avatar=sql.value(4).toString();
+        current_user.registration_time=sql.value(5).toDateTime();
+        current_user.last_login_time=QDateTime::currentDateTime();
+        update_login_time();
         return true;
     }
     else
@@ -51,12 +51,12 @@ bool UserLogin::checkLoginStatus()
     }
 }
 
-void UserLogin::updateLoginTime()
+void UserLogin::update_login_time()
 {
     QSqlQuery sql(database);
 
     QString sqlStatement =
-    QString("UPDATE user_info SET last_login_time = :lastLoginTime WHERE user_id = :userId");
+    QString("UPDATE user_info SET last_login_time = :last_login_time WHERE user_id = :userId");
 
     // 准备查询
     if (!sql.prepare(sqlStatement)) {
@@ -66,8 +66,8 @@ void UserLogin::updateLoginTime()
 
     qDebug()<<sqlStatement;
     // 绑定参数值
-    sql.bindValue(":lastLoginTime", QDateTime::currentDateTime().toString(Qt::ISODate));
-    sql.bindValue(":userId", currentUser.userID);
+    sql.bindValue(":last_login_time", QDateTime::currentDateTime().toString(Qt::ISODate));
+    sql.bindValue(":userId", current_user.user_ID);
 
     // 执行查询
     if (!sql.exec()) {
@@ -79,14 +79,14 @@ void UserLogin::updateLoginTime()
 void UserLogin::on_ButtonLogin_clicked()
 {
     //获取输入框内容；
-    userAccount=ui->AccountLineEdit->text();
-    userPassword=ui->PasswordLineEdit->text();
-    qDebug()<<QString("userAccount: %1").arg(userAccount);
-    qDebug()<<QString("userPassword: %1").arg(userPassword);
-    if(checkLoginStatus())
+    user_account=ui->AccountLineEdit->text();
+    user_password=ui->PasswordLineEdit->text();
+    qDebug()<<QString("user_account: %1").arg(user_account);
+    qDebug()<<QString("user_password: %1").arg(user_password);
+    if(check_login_status())
     {
         QMessageBox::information(this,"状态","登陆成功");
-        emit loginSignal(true);
+        emit login_signal(true);
     }
     else
     {

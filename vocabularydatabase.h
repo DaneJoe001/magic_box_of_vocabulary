@@ -2,10 +2,9 @@
 #define VOCABULARYDATABASE_H
 
 #include <QString>
+#include "database_manager.h"
 
-#include "databaseoperation.h"
-
-#define STAR_LIST 0
+#define STAR_LIST 1
 
 struct WordInfo
 {
@@ -13,8 +12,6 @@ struct WordInfo
     quint32 wordID;
     //单词文本
     QString wordText;
-    //单词词性
-    QString partOfSpeech;
     //英式音标
     QString britishPhoneticSymbol;
     //美式音标
@@ -30,7 +27,7 @@ struct WordCollectionInfo
     //合集名字
     QString collectionName;
     //合集单词数量
-    quint32 wordQuantity;
+    quint32 word_quantity;
     //对应数据库表名
     QString tableName;
     //合集单词序号列表
@@ -38,44 +35,45 @@ struct WordCollectionInfo
 };
 
 
-class VocabularyDatabase:public DatabaseOperation
+class VocabularyDatabase
 {
 public:
     //单词库，包含所有单词
-    QList<WordInfo> allWords;
+    QList<WordInfo> all_words;
     //单词合集信息，包含所有单词列表
-    QList<WordCollectionInfo> collectionList;
+    QList<WordCollectionInfo> collection_list;
     //单词合集数量
-    quint32 listQuantity;
+    quint32 list_quantity;
+    //创建数据库对象
+    QSqlDatabase database;
 
 public:
     VocabularyDatabase();
 
     //初始化单词库
-    void initAllWordInfo();
+    void init_all_word_info();
     //初始化合集列表
-    void initCollectionList();
+    void init_collection_list();
     //初始化单词列表
-    void initWordList(WordCollectionInfo* collection);
+    void init_word_list(WordCollectionInfo* collection);
 
     //通过表名查询单词合集，并返回单词合集序号
-    qint32 searchCollection(QString tableName);
+    qint32 search_collection(QString tableName);
 
     //通过合集名查询单词合集，并返回单词合集序号
-    qint32 searchCollectionByCollectionName(QString collectionName);
+    qint32 search_collection_by_collection_name(QString collectionName);
 
     //判断单词是否位于某合集
-    bool isExistInCollection(WordCollectionInfo collection,WordInfo word);
+    bool is_exist_in_collection(WordCollectionInfo collection,WordInfo word);
     //添加单词至指定合集
-    bool addWordToCollection(WordCollectionInfo collection,WordInfo word);
+    bool add_word_to_collection(WordCollectionInfo collection,WordInfo word);
     //从指定合集移除单词
-    bool removeWordFromCollection(WordCollectionInfo collection,WordInfo word);
+    bool remove_word_from_collection(WordCollectionInfo collection,WordInfo word);
     //查找单词并返回单词信息
-    WordInfo searchWord(QString searchText);
+    WordInfo search_word(QString searchText);
 
 private:
-    //创建数据库对象
-    QSqlDatabase database;
+
 
 };
 

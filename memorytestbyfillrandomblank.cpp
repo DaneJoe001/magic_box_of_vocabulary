@@ -10,8 +10,8 @@ MemoryTestByFillRandomBlank::MemoryTestByFillRandomBlank(QWidget *parent) :
     this->installEventFilter(this);
 
     //初始化填充位置及单词长度
-    fillPosition=0;
-    recentWordLength=0;
+    fill_position=0;
+    recent_word_length=0;
 
     //查找当前界面符合条件的所有标签兵填充进容器
     for (int i = 1; i <= 20; ++i)
@@ -41,7 +41,7 @@ MemoryTestByFillRandomBlank::MemoryTestByFillRandomBlank(QWidget *parent) :
         labels[i-1]->hide();
     }
     //初始化清空所有字母标签
-    clearLabel();
+    clear_label();
 
 }
 
@@ -50,17 +50,17 @@ MemoryTestByFillRandomBlank::~MemoryTestByFillRandomBlank()
     delete ui;
 }
 
-void MemoryTestByFillRandomBlank::setWordLabel(QChar letter)
+void MemoryTestByFillRandomBlank::set_word_label(QChar letter)
 {
     //当传入字符为'#'时标志Enter事件进行检查结果；
     if(letter=='#')
     {
         //拼写正确退出窗口，错误则继续运行；
-        if(checkAnswer())
+        if(check_answer())
         {
             QMessageBox::information(this, "结果", "拼写正确");
             //清空标签并退出，为下一次测试做准备
-            clearLabel();
+            clear_label();
             this->close();
         }
         else
@@ -72,40 +72,40 @@ void MemoryTestByFillRandomBlank::setWordLabel(QChar letter)
     //当传入字符为'#'时标志Backspace事件，回退一格；
     if(letter==QChar('_'))
     {
-        if(fillPosition>0)
+        if(fill_position>0)
         {
             //当前拼接的单词删除末尾字符
             answer.chop(1);
             //更新当前填充下标
-            fillPosition--;
+            fill_position--;
         }
         //以'_'标识清退位置
-        labels[fillPosition]->setText(QString(letter));
+        labels[fill_position]->setText(QString(letter));
     }
     //当传入字符为字母时进行填充
     else if(letter.isLetter())
     {
         //当填充位置为首字母时转大写；
-        if(fillPosition==0)
+        if(fill_position==0)
         {
-            labels[fillPosition++]->setText(QString(letter));
+            labels[fill_position++]->setText(QString(letter));
         }
         else
         {
-            labels[fillPosition++]->setText(QString(letter).toLower());
+            labels[fill_position++]->setText(QString(letter).toLower());
         }
         //拼接当前单词；
         answer.append(letter.toLower());
         //在控制台展示信息；
-        qDebug()<<QString("answer: %1,fillPosition: %2").arg(answer).arg(fillPosition);
+        //qDebug()<<QString("answer: %1,fill_position: %2").arg(answer).arg(fill_position);
         //当填充下标为目标单词长度时进行检查；
-        if(fillPosition==recentWordLength)
+        if(fill_position==recent_word_length)
         {
-            if(checkAnswer())
+            if(check_answer())
             {
                 //清空标签并退出，为下一次测试做准备
                 QMessageBox::information(this, "结果", "拼写正确");
-                clearLabel();
+                clear_label();
                 this->close();
             }
             else
@@ -118,18 +118,18 @@ void MemoryTestByFillRandomBlank::setWordLabel(QChar letter)
 }
 
 //从单词信息获取目标单词
-void MemoryTestByFillRandomBlank::setDestWord()
+void MemoryTestByFillRandomBlank::set_dest_word()
 {
-    recentWordLength=word.wordText.length();
-    qDebug()<<QString("recentWordLength:%1").arg(recentWordLength);
-    for(quint32 i=0;i<recentWordLength;i++)
+    recent_word_length=word.wordText.length();
+    //qDebug()<<QString("recent_word_length:%1").arg(recent_word_length);
+    for(quint32 i=0;i<recent_word_length;i++)
     {
         labels[i]->show();
-        //labels[i]->setAlignment(Qt::AlignCenter);
+        labels[i]->setAlignment(Qt::AlignCenter);
     }
 }
 
-bool MemoryTestByFillRandomBlank::checkAnswer()
+bool MemoryTestByFillRandomBlank::check_answer()
 {
     //判断结果是否正确；
     if(answer==word.wordText)
@@ -142,18 +142,19 @@ bool MemoryTestByFillRandomBlank::checkAnswer()
     }
 }
 
-void MemoryTestByFillRandomBlank::clearLabel()
+void MemoryTestByFillRandomBlank::clear_label()
 {
     //清空标签；
     for(int i=0;i<MAX_WORD_LENGTH;i++)
     {
         labels[i]->setText("_");
+        labels[i]->hide();
     }
     //清空当前单词；
     answer.clear();
     //重设当前单词位序；
-    fillPosition=0;
-    qDebug()<<"Tabel clear!";
+    fill_position=0;
+    //qDebug()<<"Tabel clear!";
 }
 
 void MemoryTestByFillRandomBlank::keyPressEvent(QKeyEvent *event)
@@ -163,15 +164,22 @@ void MemoryTestByFillRandomBlank::keyPressEvent(QKeyEvent *event)
     //区分字母、Enter、Backspace按键响应；
     if(key==Qt::Key_Backspace)
     {
-        setWordLabel('_');
+        set_word_label('_');
     }
     else if(QChar(key).isLetter())
     {
-        setWordLabel(QChar(key));
+        set_word_label(QChar(key));
     }
     else if(key==Qt::Key_Enter)
     {
-        qDebug()<<"Push Enter!";
-        setWordLabel('#');
+        //qDebug()<<"Push Enter!";
+        set_word_label('#');
     }
+}
+
+void MemoryTestByFillRandomBlank::closeEvent(QCloseEvent *event)
+{
+    emit windowClosed();
+    // 调用基类的closeEvent以执行默认的关闭逻辑
+    QWidget::closeEvent(event);
 }

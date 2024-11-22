@@ -1,21 +1,22 @@
+#include "database_manager.h"
 #include "vocabularydatabase.h"
 
 VocabularyDatabase::VocabularyDatabase()
-    :database(DatabaseOperation::returnDatabase())
 {
+    database=DatabaseManager::get_database("basic_database");
     //初始化所有单词；
-    initAllWordInfo();
+    init_all_word_info();
     //初始化单词合集列表；
-    initCollectionList();
+    init_collection_list();
 
 }
 
-void VocabularyDatabase::initAllWordInfo()
+void VocabularyDatabase::init_all_word_info()
 {
-    //查询并存储all_words单词表数据；
+    //查询并存储all_words_beta单词表数据；
     QSqlQuery sql=QSqlQuery(database);
-    QString sqlStatement="select * from all_words;";
-    qDebug()<<sqlStatement;
+    QString sqlStatement="select * from all_words_beta;";
+    //qDebug()<<sqlStatement;
     if(sql.exec(sqlStatement)==false)
     {
         qDebug()<<"Sql query failed!";
@@ -27,71 +28,69 @@ void VocabularyDatabase::initAllWordInfo()
     {
         word.wordID=sql.value(0).toUInt();
         word.wordText=sql.value(1).toString();
-        word.partOfSpeech=sql.value(2).toString();
-        word.britishPhoneticSymbol=sql.value(3).toString();
-        word.americanPhoneticSymbol=sql.value(4).toString();
-        word.wordExplanation=sql.value(5).toString();
-        allWords.append(word);
+        word.britishPhoneticSymbol=sql.value(2).toString();
+        word.americanPhoneticSymbol=sql.value(3).toString();
+        word.wordExplanation=sql.value(4).toString();
+        all_words.append(word);
     }
 }
 
-void VocabularyDatabase::initCollectionList()
+void VocabularyDatabase::init_collection_list()
 {
     QSqlQuery sql=QSqlQuery(database);
     QString sqlStatement="select * from collection_info;";
-    qDebug()<<sqlStatement;
+    //qDebug()<<sqlStatement;
     if(sql.exec(sqlStatement)==false)
     {
         qDebug()<<"Sql query failed!";
         return;
     }
-    WordCollectionInfo collection;
+    bool isCollectionExist=false;
     while(sql.next()==true)
     {
+        //注意collection的生命周期
+        //确保每次都重新创建
+        WordCollectionInfo collection;
         collection.collectionID=sql.value(0).toUInt();
         collection.collectionName=sql.value(1).toString();
-        collection.wordQuantity=sql.value(2).toUInt();
+        collection.word_quantity=sql.value(2).toUInt();
         collection.tableName=sql.value(3).toString();
         //初始化单词合集列表序号；
-        initWordList(&collection);
-        qDebug()<<"initCollectionList:"
+        init_word_list(&collection);
+        qDebug()<<"init_collection_list:"
                  <<collection.collectionName
                  <<collection.wordIdList.size();
-        collectionList.append(collection);
-    }
-    for(quint32 i=0;i<listQuantity;i++)
-    {
-        if(collectionList[i].collectionID==collection.collectionID)
+        //在单词列表存在时更新单词列表，不存在时则追加
+        for(quint32 i=0;i<collection_list.size();i++)
         {
-            collectionList[i]=collection;
-            //TODO:内存管理；
-            return;
+            if(collection_list[i].collectionID==collection.collectionID)
+            {
+                isCollectionExist=true;
+                collection_list[i]=collection;
+                //TODO:内存管理；
+                break;
+            }
         }
+        if(isCollectionExist==false)
+        {
+            collection_list.append(collection);
+        }
+
     }
     //获取单词合集数量；
-    listQuantity=collectionList.size();
-    qDebug()<<QString("List quantity:%1").arg(listQuantity);
+    list_quantity=collection_list.size();
+    qDebug()<<QString("List quantity:%1").arg(list_quantity);
 
 }
 
-void VocabularyDatabase::initWordList(WordCollectionInfo* collection)
+void VocabularyDatabase::init_word_list(WordCollectionInfo* collection)
 {
     QSqlQuery sql=QSqlQuery(database);
     QString sqlStatement=QString("select * from collection_info where table_name='%1'");
-//    if(sql.exec(sqlStatement)==false)
-//    {
-//        qDebug()<<"Sql query failed!";
-//        return;
-//    }
-//    quint32 collectionID=0;
-//    if(sql.next()==true)
-//    {
-//        collectionID=sql.value(0).toUInt();
-//    }
     //根据表名查询对应数据并存储；
     sqlStatement.clear();
     sqlStatement=QString("select * from %1;").arg(collection->tableName);
-    qDebug()<<sqlStatement;
+    //qDebug()<<sqlStatement;
     if(sql.exec(sqlStatement)==false)
     {
         qDebug()<<"Sql query failed!";
@@ -104,10 +103,10 @@ void VocabularyDatabase::initWordList(WordCollectionInfo* collection)
         wordID=sql.value(0).toUInt();
         collection->wordIdList.append(wordID);
     }
-    collection->wordQuantity=collection->wordIdList.size();
+    collection->word_quantity=collection->wordIdList.size();
 }
 
-qint32 VocabularyDatabase::searchCollection(QString tableName)
+qint32 VocabularyDatabase::search_collection(QString tableName)
 {
     //查询单词数据表位序；
     qint32 index=-1;
@@ -115,7 +114,7 @@ qint32 VocabularyDatabase::searchCollection(QString tableName)
     QString sqlStatement =
         QString("SELECT list_id FROM collection_info WHERE table_name='%1'").
                            arg(tableName);
-    qDebug()<<sqlStatement;
+    //qDebug()<<sqlStatement;
     if(sql.exec(sqlStatement)==false)
     {
         qDebug() << "SQL query failed: " << sql.lastError().text();
@@ -129,7 +128,7 @@ qint32 VocabularyDatabase::searchCollection(QString tableName)
     return index;
 }
 
-qint32 VocabularyDatabase::searchCollectionByCollectionName(QString collectionName)
+qint32 VocabularyDatabase::search_collection_by_collection_name(QString collectionName)
 {
     //查询单词数据表位序；
     qint32 index=-1;
@@ -137,7 +136,7 @@ qint32 VocabularyDatabase::searchCollectionByCollectionName(QString collectionNa
     QString sqlStatement =
         QString("SELECT list_id FROM collection_info WHERE collection_name='%1'").
         arg(collectionName);
-    qDebug()<<sqlStatement;
+    //qDebug()<<sqlStatement;
     if(sql.exec(sqlStatement)==false)
     {
         qDebug() << "SQL query failed: " << sql.lastError().text();
@@ -152,10 +151,10 @@ qint32 VocabularyDatabase::searchCollectionByCollectionName(QString collectionNa
     return index;
 }
 
-bool VocabularyDatabase::isExistInCollection(WordCollectionInfo collection, WordInfo word)
+bool VocabularyDatabase::is_exist_in_collection(WordCollectionInfo collection, WordInfo word)
 {
     //查询合集是否存在；
-    qint32 index=searchCollection(collection.tableName);
+    qint32 index=search_collection(collection.tableName);
     if(index==-1)
     {
         qDebug()<<QString("Table %1 not found!").
@@ -167,7 +166,7 @@ bool VocabularyDatabase::isExistInCollection(WordCollectionInfo collection, Word
     QString sqlStatement = QString("SELECT * FROM %1 WHERE word_id=%2").
                            arg(collection.tableName).
                            arg(word.wordID);
-    qDebug()<<sqlStatement;
+    //qDebug()<<sqlStatement;
     if(sql.exec(sqlStatement)==false)
     {
         qDebug() << "SQL query failed: " << sql.lastError().text();
@@ -180,16 +179,16 @@ bool VocabularyDatabase::isExistInCollection(WordCollectionInfo collection, Word
     return false;
 }
 
-bool VocabularyDatabase::addWordToCollection(WordCollectionInfo collection, WordInfo word)
+bool VocabularyDatabase::add_word_to_collection(WordCollectionInfo collection, WordInfo word)
 {
-    qint32 index=searchCollection(collection.tableName);
+    qint32 index=search_collection(collection.tableName);
     if(index==-1)
     {
         qDebug()<<QString("Table %1 not found!").arg(collection.collectionName);
         return false;
     }
     //检查单词是否存在，不存在则添加；
-    if(isExistInCollection(collection,word))
+    if(is_exist_in_collection(collection,word))
     {
         qDebug()<<QString("Word %1 has been added to table %2").
                     arg(word.wordText).
@@ -201,7 +200,7 @@ bool VocabularyDatabase::addWordToCollection(WordCollectionInfo collection, Word
     QString sqlStatement=QString("insert into %1 (word_id) values(%2);").
                            arg(collection.tableName).
                            arg(word.wordID);
-    qDebug()<<sqlStatement;
+    //qDebug()<<sqlStatement;
     if(sql.exec(sqlStatement)==false)
     {
         qDebug() << "Failed to add word "
@@ -211,11 +210,11 @@ bool VocabularyDatabase::addWordToCollection(WordCollectionInfo collection, Word
         //TODO:show tip information on ui;
         return false;
     }
-    collection.wordQuantity++;
+    collection.word_quantity++;
     sqlStatement=QString("UPDATE collection_info SET word_quantity = %1 WHERE table_name = '%2';").
-                   arg(collection.wordQuantity).
+                   arg(collection.word_quantity).
                    arg(collection.tableName);
-    qDebug()<<sqlStatement;
+    //qDebug()<<sqlStatement;
     if(!sql.exec(sqlStatement))
     {
         qDebug()<<"Update error!";
@@ -223,16 +222,16 @@ bool VocabularyDatabase::addWordToCollection(WordCollectionInfo collection, Word
     return true;
 }
 
-bool VocabularyDatabase::removeWordFromCollection(WordCollectionInfo collection, WordInfo word)
+bool VocabularyDatabase::remove_word_from_collection(WordCollectionInfo collection, WordInfo word)
 {
     //在表和单词存在的情况下删除单词；
-    qint32 index=searchCollection(collection.tableName);
+    qint32 index=search_collection(collection.tableName);
     if(index==-1)
     {
         qDebug()<<QString("Table %1 not found!").arg(collection.collectionName);
         return false;
     }
-    if(isExistInCollection(collection,word)==false)
+    if(is_exist_in_collection(collection,word)==false)
     {
         qDebug()<<QString("Word %1 hasn't been added to table %2").
                     arg(word.wordText).
@@ -244,7 +243,7 @@ bool VocabularyDatabase::removeWordFromCollection(WordCollectionInfo collection,
     QString sqlStatement=QString("delete from %1 where word_id=%2;").
                            arg(collection.tableName).
                            arg(word.wordID);
-    qDebug()<<sqlStatement;
+    //qDebug()<<sqlStatement;
     if(sql.exec(sqlStatement)==false)
     {
         qDebug() << "Failed to delete word "
@@ -254,11 +253,11 @@ bool VocabularyDatabase::removeWordFromCollection(WordCollectionInfo collection,
         //TODO:show tip information on ui;
         return false;
     }
-    collection.wordQuantity--;
+    collection.word_quantity--;
     sqlStatement=QString("UPDATE collection_info SET word_quantity = %1 WHERE table_name = '%2';").
-                   arg(collection.wordQuantity).
+                   arg(collection.word_quantity).
                    arg(collection.tableName);
-    qDebug()<<sqlStatement;
+   // qDebug()<<sqlStatement;
     if(!sql.exec(sqlStatement))
     {
         qDebug()<<"Update error!";
@@ -266,15 +265,15 @@ bool VocabularyDatabase::removeWordFromCollection(WordCollectionInfo collection,
     return true;
 }
 
-WordInfo VocabularyDatabase::searchWord(QString searchText)
+WordInfo VocabularyDatabase::search_word(QString searchText)
 {
     WordInfo word;
     word.wordID=0;
     //查询单词并获取单词信息；
     QSqlQuery sql=QSqlQuery(database);
-    QString sqlStatement=QString("select * from all_words where word_text='%1'").
+    QString sqlStatement=QString("select * from all_words_beta where word_text='%1'").
                            arg(searchText);
-    qDebug()<<sqlStatement;
+    //qDebug()<<sqlStatement;
     if(sql.exec(sqlStatement)==false)
     {
         qDebug()<<"Sql query failed!";
@@ -284,11 +283,10 @@ WordInfo VocabularyDatabase::searchWord(QString searchText)
     {
         word.wordID=sql.value(0).toUInt();
         word.wordText=sql.value(1).toString();
-        word.partOfSpeech=sql.value(2).toString();
-        word.britishPhoneticSymbol=sql.value(3).toString();
-        word.americanPhoneticSymbol=sql.value(4).toString();
-        word.wordExplanation=sql.value(5).toString();
-        allWords.append(word);
+        word.britishPhoneticSymbol=sql.value(2).toString();
+        word.americanPhoneticSymbol=sql.value(3).toString();
+        word.wordExplanation=sql.value(4).toString();
+        all_words.append(word);
     }
     return word;
 }
