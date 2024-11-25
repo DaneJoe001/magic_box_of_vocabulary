@@ -1,7 +1,7 @@
-#include "memorytestbyfillrandomblank.h"
-#include "ui_memorytestbyfillrandomblank.h"
+#include "question_fill_blank.h"
+#include"ui_memorytestbyfillrandomblank.h"
 
-MemoryTestByFillRandomBlank::MemoryTestByFillRandomBlank(QWidget *parent) :
+QuestionFillBlank::QuestionFillBlank(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::MemoryTestByFillRandomBlank)
 {
@@ -45,12 +45,12 @@ MemoryTestByFillRandomBlank::MemoryTestByFillRandomBlank(QWidget *parent) :
 
 }
 
-MemoryTestByFillRandomBlank::~MemoryTestByFillRandomBlank()
+QuestionFillBlank::~QuestionFillBlank()
 {
     delete ui;
 }
 
-void MemoryTestByFillRandomBlank::set_word_label(QChar letter)
+void QuestionFillBlank::set_word_label(QChar letter)
 {
     //当传入字符为'#'时标志Enter事件进行检查结果；
     if(letter=='#')
@@ -118,7 +118,7 @@ void MemoryTestByFillRandomBlank::set_word_label(QChar letter)
 }
 
 //从单词信息获取目标单词
-void MemoryTestByFillRandomBlank::set_dest_word()
+void QuestionFillBlank::set_dest_word()
 {
     recent_word_length=word.wordText.length();
     //qDebug()<<QString("recent_word_length:%1").arg(recent_word_length);
@@ -129,7 +129,7 @@ void MemoryTestByFillRandomBlank::set_dest_word()
     }
 }
 
-bool MemoryTestByFillRandomBlank::check_answer()
+bool QuestionFillBlank::check_answer()
 {
     //判断结果是否正确；
     if(answer==word.wordText)
@@ -142,7 +142,7 @@ bool MemoryTestByFillRandomBlank::check_answer()
     }
 }
 
-void MemoryTestByFillRandomBlank::clear_label()
+void QuestionFillBlank::clear_label()
 {
     //清空标签；
     for(int i=0;i<MAX_WORD_LENGTH;i++)
@@ -157,7 +157,7 @@ void MemoryTestByFillRandomBlank::clear_label()
     //qDebug()<<"Tabel clear!";
 }
 
-void MemoryTestByFillRandomBlank::keyPressEvent(QKeyEvent *event)
+void QuestionFillBlank::keyPressEvent(QKeyEvent *event)
 {
     //获取key事件
     quint32 key = event->key();
@@ -177,7 +177,7 @@ void MemoryTestByFillRandomBlank::keyPressEvent(QKeyEvent *event)
     }
 }
 
-void MemoryTestByFillRandomBlank::closeEvent(QCloseEvent *event)
+void QuestionFillBlank::closeEvent(QCloseEvent *event)
 {
     emit windowClosed();
     // 调用基类的closeEvent以执行默认的关闭逻辑

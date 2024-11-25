@@ -1,28 +1,30 @@
 #include <QDebug>
 
-#include "WordCard.h"
+#include "window_word_card.h"
 #include "ui_WordCard.h"
+#include "resource_manager.h"
 
-WordCard::WordCard(QWidget *parent) :
+DialogWordCard::DialogWordCard(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::WordCard)
+    ui(new Ui::DialogWordCard)
 {
     ui->setupUi(this);
+    ResourceManager& resource_manager=ResourceManager::get_resource_manager();
     WordCard_panel_manage();
     //设置单词卡当前展示位序
     current_index=0;
     //初始化单词数据；
-    init_data_list(word_database.all_words);
+    init_data_list(resource_manager.get_all_words());
     //显示单词卡默认单词
     show_WordCard(word_list[0]);
 }
 
-WordCard::~WordCard()
+DialogWordCard::~DialogWordCard()
 {
     delete ui;
 }
 
-void WordCard::tableWordCard(WordInfo word ,quint32 srcIndex)
+void DialogWordCard::tableWordCard(WordInfo word ,quint32 srcIndex)
 {
     //显示对应单词的基本内容；
     if(current_index>max_index)
@@ -53,7 +55,7 @@ void WordCard::tableWordCard(WordInfo word ,quint32 srcIndex)
 }
 
 //TODO：检查
-void WordCard::show_prev()
+void DialogWordCard::show_prev()
 {
     //展示上一单词；
     //当展示首个单词时点击跳到末尾单词；
@@ -66,7 +68,7 @@ void WordCard::show_prev()
     show_WordCard(word_list[current_index]);
 }
 
-void WordCard::show_next()
+void DialogWordCard::show_next()
 {
     //展示下一单词；
     //当展示末尾单词时点击跳到首个单词；
@@ -79,7 +81,7 @@ void WordCard::show_next()
     show_WordCard(word_list[current_index]);
 }
 
-void WordCard::show_WordCard(WordInfo word)
+void DialogWordCard::show_WordCard(WordInfo word)
 {
     //显示对应单词的基本内容；
     if(current_index>max_index)
@@ -104,31 +106,31 @@ void WordCard::show_WordCard(WordInfo word)
     ui->pageNumberLabel->setText(pageNumber);
 }
 
-bool WordCard::add_word_to_collection(WordCollectionInfo collection)
+bool DialogWordCard::add_word_to_collection(WordCollectionInfo collection)
 {
     return word_database.add_word_to_collection(collection,word_list[current_index]);
 }
 
-bool WordCard::remove_word_from_collection(WordCollectionInfo collection)
+bool DialogWordCard::remove_word_from_collection(WordCollectionInfo collection)
 {
     return word_database.remove_word_from_collection(collection,word_list[current_index]);
 }
 
-void WordCard::WordCard_panel_manage()
+void DialogWordCard::WordCard_panel_manage()
 {
-    QObject::connect(ui->ButtonPrev,&QPushButton::clicked,this,&WordCard::show_prev);
-    QObject::connect(ui->ButtonNext,&QPushButton::clicked,this,&WordCard::show_next);
-    QObject::connect(ui->StarWord,&QCheckBox::stateChanged,this,&WordCard::on_StarWord_stateChanged);
+    QObject::connect(ui->ButtonPrev,&QPushButton::clicked,this,&DialogWordCard::show_prev);
+    QObject::connect(ui->ButtonNext,&QPushButton::clicked,this,&DialogWordCard::show_next);
+    QObject::connect(ui->StarWord,&QCheckBox::stateChanged,this,&DialogWordCard::on_StarWord_stateChanged);
 }
 
-void WordCard::init_data_list(QList<WordInfo> temp)
+void DialogWordCard::init_data_list(QList<WordInfo> temp)
 {
     word_list=temp;
     word_quantity=temp.size();
     max_index=word_quantity-1;
 }
 
-void WordCard::init_by_collection(WordCollectionInfo collectionInfo)
+void DialogWordCard::init_by_collection(WordCollectionInfo collectionInfo)
 {
     //清空当前单词
     word_list.clear();
@@ -136,7 +138,7 @@ void WordCard::init_by_collection(WordCollectionInfo collectionInfo)
     //qDebug()<<"collectionInfo.wordIdList"<<collectionInfo.wordIdList.size();
     for(quint32 i=0;i<collectionInfo.word_quantity;i++)
     {
-        word_list.append(word_database.all_words[(collectionInfo.wordIdList[i]-1)]);
+        word_list.append(all_words[(collectionInfo.wordIdList[i]-1)]);
         //qDebug()<<"Index:"<<index;
         //show_word_list.append(word_database.all_words[index]);
     }
@@ -145,22 +147,27 @@ void WordCard::init_by_collection(WordCollectionInfo collectionInfo)
     //qDebug()<<"当前单词数量："<<word_quantity;
 }
 
-void WordCard::testDataInit()
+void DialogWordCard::testDataInit()
 {
 
-    init_data_list(word_database.all_words);
-    qDebug()<<"word_quantity:"<<word_quantity;
+    //init_data_list(word_database.all_words);
+    //qDebug()<<"word_quantity:"<<word_quantity;
+}
+
+void DialogWordCard::set_current_index(qint32 word_index)
+{
+    current_index=word_index;
 }
 
 
-void WordCard::on_ButtonOK_clicked()
+void DialogWordCard::on_ButtonOK_clicked()
 {
     qDebug()<<"Push ButtonOK!";
     this->close();
 }
 
 
-void WordCard::on_StarWord_stateChanged(int arg1)
+void DialogWordCard::on_StarWord_stateChanged(int arg1)
 {
     if(arg1==Qt::Checked)
     {
@@ -175,12 +182,12 @@ void WordCard::on_StarWord_stateChanged(int arg1)
 }
 
 
-void WordCard::on_MemoryCheck_clicked()
+void DialogWordCard::on_MemoryCheck_clicked()
 {
     this->hide();
     test1.word=word_list[current_index];
     test1.set_dest_word();
     test1.show();
-    QObject::connect(&test1, &MemoryTestByFillRandomBlank::windowClosed, this, &WordCard::show);
+    QObject::connect(&test1, &QuestionFillBlank::windowClosed, this, &DialogWordCard::show);
 }
 

@@ -1,10 +1,13 @@
-#ifndef VOCABULARYDATABASE_H
-#define VOCABULARYDATABASE_H
+#ifndef DATABASE_VOCABULARY_H
+#define DATABASE_VOCABULARY_H
 
 #include <QString>
-#include "database_manager.h"
+#include<QList>
+#include<QSqlDatabase>
+
 
 #define STAR_LIST 1
+//TODO:使用QHash管理列表和数据库表名
 
 struct WordInfo
 {
@@ -35,23 +38,19 @@ struct WordCollectionInfo
 };
 
 
-class VocabularyDatabase
+class DatabaseVocabulary
 {
 public:
-    //单词库，包含所有单词
-    QList<WordInfo> all_words;
     //单词合集信息，包含所有单词列表
     QList<WordCollectionInfo> collection_list;
     //单词合集数量
     quint32 list_quantity;
-    //创建数据库对象
-    QSqlDatabase database;
 
 public:
-    VocabularyDatabase();
+    DatabaseVocabulary();
 
     //初始化单词库
-    void init_all_word_info();
+    QList<WordInfo> init_all_word_info();
     //初始化合集列表
     void init_collection_list();
     //初始化单词列表
@@ -71,10 +70,18 @@ public:
     bool remove_word_from_collection(WordCollectionInfo collection,WordInfo word);
     //查找单词并返回单词信息
     WordInfo search_word(QString searchText);
+    //获取单词列表
+    QList<WordInfo>& get_all_word_list();
+    //获取单词专业词典内容
+    QString get_word_content_from_dictionary(QString word,QString dictionary_table_name);
+    //返回数据库对象
+    QSqlDatabase  get_database();
 
 private:
+
+    QSqlDatabase database;
 
 
 };
 
-#endif // VOCABULARYDATABASE_H
+#endif // DATABASE_VOCABULARY_H

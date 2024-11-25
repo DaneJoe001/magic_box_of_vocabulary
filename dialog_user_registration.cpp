@@ -1,7 +1,9 @@
-#include "userregistration.h"
-#include "ui_userregistration.h"
+#include "dialog_user_registration.h"
+//#include "ui_userregistration.h"
+#include"database_manager.h"
+#include"ui_dialog_user_registration.h"
 
-UserRegistration::UserRegistration(QWidget *parent) :
+DialogUserRegistration::DialogUserRegistration(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::UserRegistration)
 {
@@ -10,18 +12,18 @@ UserRegistration::UserRegistration(QWidget *parent) :
 
 }
 
-UserRegistration::~UserRegistration()
+DialogUserRegistration::~DialogUserRegistration()
 {
     delete ui;
 }
 
-void UserRegistration::on_pushButton_2_clicked()
+void DialogUserRegistration::on_pushButton_2_clicked()
 {
     this->close();
 }
 
 
-void UserRegistration::on_pushButton_clicked()
+void DialogUserRegistration::on_pushButton_clicked()
 {
     //获取输入框注册信息；
     QSqlQuery sql=QSqlQuery(database);

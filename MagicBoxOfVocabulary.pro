@@ -11,29 +11,35 @@ CONFIG += c++17
 
 SOURCES += \
     database_manager.cpp \
+    database_user.cpp \
+    database_vocabulary.cpp \
+    dialog_user_login.cpp \
+    dialog_user_registration.cpp \
     main.cpp \
-    mainwindow.cpp \
-    memorytestbyfillrandomblank.cpp \
-    userlogin.cpp \
-    userregistration.cpp \
-    vocabularydatabase.cpp \
-    WordCard.cpp
+    question_base.cpp \
+    question_fill_blank.cpp \
+    resource_manager.cpp \
+    window_main.cpp \
+    window_word_card.cpp
 
 HEADERS += \
     database_manager.h \
-    mainwindow.h \
-    memorytestbyfillrandomblank.h \
-    userlogin.h \
-    userregistration.h \
-    vocabularydatabase.h \
-    WordCard.h
+    database_user.h \
+    database_vocabulary.h \
+    dialog_user_login.h \
+    dialog_user_registration.h \
+    question_base.h \
+    question_fill_blank.h \
+    resource_manager.h \
+    window_main.h \
+    window_word_card.h
 
 FORMS += \
-    mainwindow.ui \
-    memorytestbyfillrandomblank.ui \
-    userlogin.ui \
-    userregistration.ui \
-    WordCard.ui
+    dialog_user_login.ui \
+    dialog_user_registration.ui \
+    question_fill_blank.ui \
+    window_main.ui \
+    window_word_card.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

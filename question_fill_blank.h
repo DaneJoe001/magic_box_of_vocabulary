@@ -1,5 +1,5 @@
-#ifndef MEMORYTESTBYFILLRANDOMBLANK_H
-#define MEMORYTESTBYFILLRANDOMBLANK_H
+#ifndef QUESTION_FILL_BLANK_H
+#define QUESTION_FILL_BLANK_H
 
 #include <QDialog>
 #include <QEvent>
@@ -10,7 +10,7 @@
 #include <QString>
 #include <QMessageBox>
 
-#include "vocabularydatabase.h"
+#include "database_vocabulary.h"
 
 #define MAX_WORD_LENGTH 20
 
@@ -18,7 +18,7 @@ namespace Ui {
 class MemoryTestByFillRandomBlank;
 }
 
-class MemoryTestByFillRandomBlank : public QDialog
+class QuestionFillBlank : public QDialog
 {
     Q_OBJECT
 public:
@@ -26,8 +26,8 @@ public:
     WordInfo word;
 
 public:
-    explicit MemoryTestByFillRandomBlank(QWidget *parent = nullptr);
-    ~MemoryTestByFillRandomBlank();
+    explicit QuestionFillBlank(QWidget *parent = nullptr);
+    ~QuestionFillBlank();
 
     //设置当前序号标签字母；
     void set_word_label(QChar letter);
@@ -86,4 +86,4 @@ private:
 
 };
 
-#endif // MEMORYTESTBYFILLRANDOMBLANK_H
+#endif // QUESTION_FILL_BLANK_H

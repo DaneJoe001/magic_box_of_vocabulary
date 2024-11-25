@@ -1,21 +1,21 @@
-#ifndef USERREGISTRATION_H
-#define USERREGISTRATION_H
+#ifndef DIALOG_USER_REGISTRATION_H
+#define DIALOG_USER_REGISTRATION_H
 
 #include <QDialog>
 
-#include "userlogin.h"
+#include "dialog_user_login.h"
 
 namespace Ui {
 class UserRegistration;
 }
 
-class UserRegistration : public QDialog
+class DialogUserRegistration : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit UserRegistration(QWidget *parent = nullptr);
-    ~UserRegistration();
+    explicit DialogUserRegistration(QWidget *parent = nullptr);
+    ~DialogUserRegistration();
 
 private slots:
     //取消按钮
@@ -34,4 +34,4 @@ private:
     UserInfo newUser;
 };
 
-#endif // USERREGISTRATION_H
+#endif // DIALOG_USER_REGISTRATION_H

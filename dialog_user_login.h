@@ -1,12 +1,13 @@
-#ifndef USERLOGIN_H
-#define USERLOGIN_H
+#ifndef DIALOG_USER_LOGIN_H
+#define DIALOG_USER_LOGIN_H
 
 #include <QDialog>
 #include <QString>
 #include <QMessageBox>
 #include <QDateTime>
-#include "database_manager.h"
+#include <QSqlDatabase>
 
+//TODO:调整为单例模式，全局维持一个登录信息；
 namespace Ui {
 class UserLogin;
 }
@@ -14,7 +15,7 @@ class UserLogin;
 struct UserInfo
 {
     //用户标识
-    quint32 user_ID;
+    qint32 user_ID;
     //用户账户
     QString user_account;
     //用户密码
@@ -30,25 +31,21 @@ struct UserInfo
 
 };
 
-class UserLogin : public QDialog
+class DialogUserLogin : public QDialog
 {
     Q_OBJECT
 
 public:
-    //创建数据库操作对象
-    QSqlDatabase database;
-    //创建当前用户信息
-    UserInfo current_user;
-
-public:
-    explicit UserLogin(QWidget *parent = nullptr);
-    ~UserLogin();
+    explicit DialogUserLogin(QWidget *parent = nullptr);
+    ~DialogUserLogin();
 
     //检查登陆状态
     bool check_login_status();
 
     //更新登录时间
-    void update_login_time();
+    static void update_login_time();
+
+    static UserInfo get_current_user();
 
 signals:
     //发送登录信号
@@ -64,10 +61,10 @@ private slots:
 
 private:
     Ui::UserLogin *ui;
-
-    //存储输入框内容
-    QString user_account;
-    QString user_password;
+    //创建数据库操作对象
+    static QSqlDatabase database;
+    //创建当前用户信息
+    static UserInfo current_user;
 };
 
-#endif // USERLOGIN_H
+#endif // DIALOG_USER_LOGIN_H

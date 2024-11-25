@@ -1,5 +1,5 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef WINDOW_MAIN_H
+#define WINDOW_MAIN_H
 
 #include <QObject>
 #include <QListWidget>
@@ -7,23 +7,27 @@
 #include <QListWidgetItem>
 #include <QStringListModel>
 #include <QStandardItemModel>
+#include <QSqlDatabase>
 
-#include "userlogin.h"
-#include "vocabularydatabase.h"
-#include "memorytestbyfillrandomblank.h"
-#include "WordCard.h"
+#include "dialog_user_login.h"
+#include "database_vocabulary.h"
+#include "question_fill_blank.h"
+#include "window_word_card.h"
+#include "resource_manager.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
-class MainWindow : public QMainWindow
+class WindowMain : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = nullptr);
-    ~MainWindow();
+    WindowMain(QWidget *parent = nullptr);
+    ~WindowMain();
+    //初始化窗口界面
+    void init_main_window();
 
     //提供接口，设置单词查询界面单词列表
     void init_data_list(QList<WordInfo> temp);
@@ -60,6 +64,9 @@ public:
 
     //重置单词表格数据
     void clear_table();
+
+    //刷新单词表格的具体逻辑
+    void refresh_table();
 
 private slots:
     //退出按钮
@@ -104,7 +111,7 @@ private:
     Ui::MainWindow *ui;
 
     //创建登录窗口对象；
-    UserLogin login_panel;
+    DialogUserLogin login_panel;
 
     //设置单词查询界面当前展示列表的当前序号；
     qint32 current_index;
@@ -119,6 +126,7 @@ private:
     qint32 collection_current_index;
 
     //设置查询界面单词列表；
+    //直接在构造函数初始化
     QList<WordInfo> word_list;
 
     //设置词库管理界面词库列表条目；
@@ -128,18 +136,22 @@ private:
     QStringListModel *model;
 
     //创建单词数据库对象；
-    VocabularyDatabase word_database;
+    DatabaseVocabulary word_database;
 
     //设置单词拼写测试对象；
-    MemoryTestByFillRandomBlank test1;
+    QuestionFillBlank test1;
 
     //设置表格单词内容
     QList<WordInfo> show_word_list;
 
     //创建单词卡对象
-    WordCard WordCard;
+    DialogWordCard WordCard;
 
     QHash<QString,QString>dictionary;
 
+    ResourceManager* manager_resource;
+
+    QList<WordInfo>all_words;
+
 };
-#endif // MAINWINDOW_H
+#endif // WINDOW_MAIN_H

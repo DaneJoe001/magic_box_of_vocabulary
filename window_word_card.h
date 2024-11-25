@@ -2,20 +2,20 @@
 #define WordCard_H
 
 #include <QDialog>
-#include "vocabularydatabase.h"
-#include "memorytestbyfillrandomblank.h"
+#include "database_vocabulary.h"
+#include "question_fill_blank.h"
 
 namespace Ui {
-class WordCard;
+class DialogWordCard;
 }
 
-class WordCard : public QDialog
+class DialogWordCard : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit WordCard(QWidget *parent = nullptr);
-    ~WordCard();
+    explicit DialogWordCard(QWidget *parent = nullptr);
+    ~DialogWordCard();
     //表格任意位置单击显示的单词卡
     void tableWordCard(WordInfo word ,quint32 srcIndex);
 
@@ -46,6 +46,8 @@ public:
     //初始化测试数据；
     void testDataInit();
 
+    void set_current_index(qint32 word_index);
+
 private slots:
 
     //确定按钮，用于关闭窗口；
@@ -58,7 +60,7 @@ private slots:
     void on_MemoryCheck_clicked();
 
 private:
-    Ui::WordCard *ui;
+    Ui::DialogWordCard *ui;
 
     //记录当前展示单词下标；
     qint32 current_index;
@@ -73,10 +75,12 @@ private:
     QList<WordInfo> word_list;
 
     //创建单词数据库对象；
-    VocabularyDatabase word_database;
+    DatabaseVocabulary word_database;
 
     //创建单词拼写测试对象；
-    MemoryTestByFillRandomBlank test1;
+    QuestionFillBlank test1;
+
+    QList<WordInfo>all_words;
 };
 
 #endif // WordCard_H
