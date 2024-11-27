@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>WordCard</class>
- <widget class="QDialog" name="WordCard">
+ <class>DialogWordCard</class>
+ <widget class="QDialog" name="DialogWordCard">
   <property name="geometry">
    <rect>
     <x>0</x>

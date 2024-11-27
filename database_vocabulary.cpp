@@ -4,10 +4,8 @@
 DatabaseVocabulary::DatabaseVocabulary()
 {
     database=DatabaseManager::get_database("basic_database");
-//    //初始化所有单词；
-//    init_all_word_info();
-    //初始化单词合集列表；
-    qDebug()<<"开始初始化列表！";
+    //初始化单词合集信息;
+    //全部单词信息交由资源管理器实现;
     init_collection_list();
 
 }
@@ -21,11 +19,12 @@ QList<WordInfo> DatabaseVocabulary::init_all_word_info()
     }
     //查询并存储all_words_beta单词表数据；
     QSqlQuery sql=QSqlQuery(database);
-    QString sqlStatement="select * from all_words;";
-    //qDebug()<<sqlStatement;
-    if(sql.exec(sqlStatement)==false)
+    QString sql_statement="select * from all_words;";
+
+    if(sql.exec(sql_statement)==false)
     {
-        qDebug()<<"Sql query failed!";
+        qDebug()<<"The statement executing now:"<<sql_statement;
+        qDebug()<<"Failed to execute sql query!";
         return all_words;
     }
     WordInfo word;
@@ -45,11 +44,11 @@ QList<WordInfo> DatabaseVocabulary::init_all_word_info()
 void DatabaseVocabulary::init_collection_list()
 {
     QSqlQuery sql=QSqlQuery(database);
-    QString sqlStatement="select * from collection_info;";
-    //qDebug()<<sqlStatement;
-    if(sql.exec(sqlStatement)==false)
+    QString sql_statement="select * from collection_info;";
+    if(sql.exec(sql_statement)==false)
     {
-        qDebug()<<"Sql query failed!";
+        qDebug()<<"The statement executing now:"<<sql_statement;
+        qDebug()<<"Failed to execute sql query!";
         return;
     }
     bool isCollectionExist=false;
@@ -93,14 +92,14 @@ void DatabaseVocabulary::init_collection_list()
 void DatabaseVocabulary::init_word_list(WordCollectionInfo* collection)
 {
     QSqlQuery sql=QSqlQuery(database);
-    QString sqlStatement=QString("select * from collection_info where table_name='%1'");
+    QString sql_statement=QString("select * from collection_info where table_name='%1'");
     //根据表名查询对应数据并存储；
-    sqlStatement.clear();
-    sqlStatement=QString("select * from %1;").arg(collection->tableName);
-    //qDebug()<<sqlStatement;
-    if(sql.exec(sqlStatement)==false)
+    sql_statement.clear();
+    sql_statement=QString("select * from %1;").arg(collection->tableName);
+    if(sql.exec(sql_statement)==false)
     {
-        qDebug()<<"Sql query failed!";
+        qDebug()<<"The statement executing now:"<<sql_statement;
+        qDebug()<<"Failed to execute sql query!";
         return;
     }
     //根据查询结果添加单词序号；
@@ -118,12 +117,13 @@ qint32 DatabaseVocabulary::search_collection(QString tableName)
     //查询单词数据表位序；
     qint32 index=-1;
     QSqlQuery sql=QSqlQuery(database);
-    QString sqlStatement =
+    QString sql_statement =
         QString("SELECT list_id FROM collection_info WHERE table_name='%1'").
                            arg(tableName);
-    //qDebug()<<sqlStatement;
-    if(sql.exec(sqlStatement)==false)
+    
+    if(sql.exec(sql_statement)==false)
     {
+        qDebug()<<"The statement executing now:"<<sql_statement;
         qDebug() << "SQL query failed: " << sql.lastError().text();
         return -1;
     }
@@ -140,12 +140,13 @@ qint32 DatabaseVocabulary::search_collection_by_collection_name(QString collecti
     //查询单词数据表位序；
     qint32 index=-1;
     QSqlQuery sql=QSqlQuery(database);
-    QString sqlStatement =
+    QString sql_statement =
         QString("SELECT list_id FROM collection_info WHERE collection_name='%1'").
         arg(collectionName);
-    //qDebug()<<sqlStatement;
-    if(sql.exec(sqlStatement)==false)
+    
+    if(sql.exec(sql_statement)==false)
     {
+        qDebug()<<"The statement executing now:"<<sql_statement;
         qDebug() << "SQL query failed: " << sql.lastError().text();
         return -1;
     }
@@ -170,12 +171,13 @@ bool DatabaseVocabulary::is_exist_in_collection(WordCollectionInfo collection, W
     }
     //查询单词是否存在对应合集内；
     QSqlQuery sql=QSqlQuery(database);
-    QString sqlStatement = QString("SELECT * FROM %1 WHERE word_id=%2").
+    QString sql_statement = QString("SELECT * FROM %1 WHERE word_id=%2").
                            arg(collection.tableName).
                            arg(word.wordID);
-    //qDebug()<<sqlStatement;
-    if(sql.exec(sqlStatement)==false)
+    
+    if(sql.exec(sql_statement)==false)
     {
+        qDebug()<<"The statement executing now:"<<sql_statement;
         qDebug() << "SQL query failed: " << sql.lastError().text();
         return false;
     }
@@ -204,12 +206,13 @@ bool DatabaseVocabulary::add_word_to_collection(WordCollectionInfo collection, W
         return false;
     }
     QSqlQuery sql=QSqlQuery(database);
-    QString sqlStatement=QString("insert into %1 (word_id) values(%2);").
+    QString sql_statement=QString("insert into %1 (word_id) values(%2);").
                            arg(collection.tableName).
                            arg(word.wordID);
-    //qDebug()<<sqlStatement;
-    if(sql.exec(sqlStatement)==false)
+    
+    if(sql.exec(sql_statement)==false)
     {
+        qDebug()<<"The statement executing now:"<<sql_statement;
         qDebug() << "Failed to add word "
                  << word.wordText << " to table "
                  << collection.collectionName
@@ -218,12 +221,13 @@ bool DatabaseVocabulary::add_word_to_collection(WordCollectionInfo collection, W
         return false;
     }
     collection.word_quantity++;
-    sqlStatement=QString("UPDATE collection_info SET word_quantity = %1 WHERE table_name = '%2';").
+    sql_statement=QString("UPDATE collection_info SET word_quantity = %1 WHERE table_name = '%2';").
                    arg(collection.word_quantity).
                    arg(collection.tableName);
-    //qDebug()<<sqlStatement;
-    if(!sql.exec(sqlStatement))
+    
+    if(!sql.exec(sql_statement))
     {
+        qDebug()<<"The statement executing now:"<<sql_statement;
         qDebug()<<"Update error!";
     }
     return true;
@@ -247,12 +251,13 @@ bool DatabaseVocabulary::remove_word_from_collection(WordCollectionInfo collecti
         return false;
     }
     QSqlQuery sql=QSqlQuery(database);
-    QString sqlStatement=QString("delete from %1 where word_id=%2;").
+    QString sql_statement=QString("delete from %1 where word_id=%2;").
                            arg(collection.tableName).
                            arg(word.wordID);
-    //qDebug()<<sqlStatement;
-    if(sql.exec(sqlStatement)==false)
+    
+    if(sql.exec(sql_statement)==false)
     {
+        qDebug()<<"The statement executing now:"<<sql_statement;
         qDebug() << "Failed to delete word "
                  << word.wordText << " from table "
                  << collection.collectionName
@@ -261,13 +266,14 @@ bool DatabaseVocabulary::remove_word_from_collection(WordCollectionInfo collecti
         return false;
     }
     collection.word_quantity--;
-    sqlStatement=QString("UPDATE collection_info SET word_quantity = %1 WHERE table_name = '%2';").
+    sql_statement=QString("UPDATE collection_info SET word_quantity = %1 WHERE table_name = '%2';").
                    arg(collection.word_quantity).
                    arg(collection.tableName);
-   // qDebug()<<sqlStatement;
-    if(!sql.exec(sqlStatement))
+   
+    if(!sql.exec(sql_statement))
     {
-        qDebug()<<"Update error!";
+        qDebug()<<"The statement executing now:"<<sql_statement;
+        qDebug()<<"Failed to update!";
     }
     return true;
 }
@@ -278,12 +284,13 @@ WordInfo DatabaseVocabulary::search_word(QString searchText)
     word.wordID=0;
     //查询单词并获取单词信息；
     QSqlQuery sql=QSqlQuery(database);
-    QString sqlStatement=QString("select * from all_words where word_text='%1'").
+    QString sql_statement=QString("select * from all_words where word_text='%1'").
                            arg(searchText);
-    //qDebug()<<sqlStatement;
-    if(sql.exec(sqlStatement)==false)
+    
+    if(sql.exec(sql_statement)==false)
     {
-        qDebug()<<"Sql query failed!";
+        qDebug()<<"The statement executing now:"<<sql_statement;
+        qDebug()<<"Failed to execute sql query!";
         return word;
     }
     if(sql.next()==true)
@@ -307,7 +314,7 @@ QString DatabaseVocabulary::get_word_content_from_dictionary(QString word, QStri
     //qDebug()<<"查询语句："<<sql_statement;
     if (!sql.exec(sql_statement))
     {
-        qDebug() << "Sql query failed!";
+        qDebug() << "Failed to execute sql query!";
         qDebug() << sql.lastError().text(); // 打印具体的错误信息
         return QString();
     }
@@ -319,8 +326,3 @@ QString DatabaseVocabulary::get_word_content_from_dictionary(QString word, QStri
     }
     return word_content;
 }
-
-//QSqlDatabase DatabaseVocabulary::get_database()
-//{
-//    return database;
-//}

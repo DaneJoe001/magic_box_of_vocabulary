@@ -6,7 +6,7 @@
 #include<QSqlDatabase>
 
 
-#define STAR_LIST 1
+#define STAR_LIST 0
 //TODO:使用QHash管理列表和数据库表名
 
 struct WordInfo

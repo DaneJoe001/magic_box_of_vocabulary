@@ -43,9 +43,6 @@ public:
     //响应单词卡界面按钮；
     void WordCard_panel_manage();
 
-    //初始化测试数据；
-    void testDataInit();
-
     void set_current_index(qint32 word_index);
 
 private slots:

@@ -15,12 +15,12 @@ SOURCES += \
     database_vocabulary.cpp \
     dialog_user_login.cpp \
     dialog_user_registration.cpp \
+    dialog_word_card.cpp \
     main.cpp \
     question_base.cpp \
     question_fill_blank.cpp \
     resource_manager.cpp \
-    window_main.cpp \
-    window_word_card.cpp
+    window_main.cpp
 
 HEADERS += \
     database_manager.h \
@@ -28,18 +28,18 @@ HEADERS += \
     database_vocabulary.h \
     dialog_user_login.h \
     dialog_user_registration.h \
+    dialog_word_card.h \
     question_base.h \
     question_fill_blank.h \
     resource_manager.h \
-    window_main.h \
-    window_word_card.h
+    window_main.h
 
 FORMS += \
     dialog_user_login.ui \
     dialog_user_registration.ui \
+    dialog_word_card.ui \
     question_fill_blank.ui \
-    window_main.ui \
-    window_word_card.ui
+    window_main.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

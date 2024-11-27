@@ -12,7 +12,7 @@
 #include "dialog_user_login.h"
 #include "database_vocabulary.h"
 #include "question_fill_blank.h"
-#include "window_word_card.h"
+#include "dialog_word_card.h"
 #include "resource_manager.h"
 
 QT_BEGIN_NAMESPACE

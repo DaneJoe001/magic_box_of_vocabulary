@@ -12,7 +12,7 @@ QSqlDatabase DatabaseManager::get_database(QString database_name)
     //检查驱动是否存在
     if (QSqlDatabase::drivers().isEmpty())
     {
-        qDebug() << "Error! No drivers!";
+        qDebug() << "Error:No drivers!";
         return QSqlDatabase(); // 返回一个空的数据库对象
     }
     QSqlDatabase database_1=QSqlDatabase::addDatabase("QSQLITE","local_connection");
@@ -20,7 +20,7 @@ QSqlDatabase DatabaseManager::get_database(QString database_name)
     database_1.setDatabaseName("./dictionary_database.db");
     if(database_1.open())
     {
-        qDebug()<<"Connect to SQLite database successfully!";
+        qDebug()<<"Succeeding in connecting to SQLite database successfully!";
         database_map.insert("dictionary_database",database_1);
     }
     else
@@ -38,7 +38,7 @@ QSqlDatabase DatabaseManager::get_database(QString database_name)
     database_2.setDatabaseName("magic_box_of_vocabulary");
     if(database_2.open())
     {
-        qDebug()<<"Connect to MySql database successfully!";
+        qDebug()<<"Succeeding in connecting to MySql database successfully!";
         database_map.insert("basic_database",database_2);
     }
     else

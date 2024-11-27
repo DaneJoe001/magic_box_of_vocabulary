@@ -15,7 +15,7 @@ QSqlDatabase DictionaryDatabase::get_database()
     // 检查数据库驱动是否可用
     if (QSqlDatabase::drivers().isEmpty())
     {
-        qDebug() << "Error! No drivers!";
+        qDebug() << "Error: No drivers!";
         return QSqlDatabase(); // 返回一个空的数据库对象
     }
 
@@ -36,14 +36,13 @@ QSqlDatabase DictionaryDatabase::get_database()
     // 打开数据库
     if (db.open())
     {
-        qDebug() << "Connected to SQLite database successfully!";
+        qDebug() << "succeeded in connecting to SQLite database!";
 
     }
     else
     {
         qDebug() << "Failed to connect to SQLite database!";
     }
-    qDebug() << "数据库文件路径:" << db.databaseName();
 
     return db;
 }

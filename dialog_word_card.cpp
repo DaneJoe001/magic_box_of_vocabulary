@@ -1,7 +1,7 @@
 #include <QDebug>
 
-#include "window_word_card.h"
-#include "ui_WordCard.h"
+#include "dialog_word_card.h"
+#include "ui_dialog_word_card.h"
 #include "resource_manager.h"
 
 DialogWordCard::DialogWordCard(QWidget *parent) :
@@ -10,6 +10,8 @@ DialogWordCard::DialogWordCard(QWidget *parent) :
 {
     ui->setupUi(this);
     ResourceManager& resource_manager=ResourceManager::get_resource_manager();
+    //初始化单词卡数据来源
+    all_words=resource_manager.get_all_words();
     WordCard_panel_manage();
     //设置单词卡当前展示位序
     current_index=0;
@@ -29,7 +31,7 @@ void DialogWordCard::tableWordCard(WordInfo word ,quint32 srcIndex)
     //显示对应单词的基本内容；
     if(current_index>max_index)
     {
-        qDebug()<<"Invailed index!";
+        qDebug()<<"Error:Invaild index!";
         return;
     }
     ui->WordText->setText(word.wordText);
@@ -64,7 +66,6 @@ void DialogWordCard::show_prev()
     {
         current_index=max_index;
     }
-    qDebug()<<current_index;
     show_WordCard(word_list[current_index]);
 }
 
@@ -77,7 +78,6 @@ void DialogWordCard::show_next()
     {
         current_index=0;
     }
-    qDebug()<<current_index;
     show_WordCard(word_list[current_index]);
 }
 
@@ -134,24 +134,13 @@ void DialogWordCard::init_by_collection(WordCollectionInfo collectionInfo)
 {
     //清空当前单词
     word_list.clear();
-    //qDebug()<<collectionInfo.word_quantity;
-    //qDebug()<<"collectionInfo.wordIdList"<<collectionInfo.wordIdList.size();
     for(quint32 i=0;i<collectionInfo.word_quantity;i++)
     {
         word_list.append(all_words[(collectionInfo.wordIdList[i]-1)]);
-        //qDebug()<<"Index:"<<index;
-        //show_word_list.append(word_database.all_words[index]);
     }
     word_quantity=collectionInfo.word_quantity;
     max_index=word_quantity-1;
-    //qDebug()<<"当前单词数量："<<word_quantity;
-}
-
-void DialogWordCard::testDataInit()
-{
-
-    //init_data_list(word_database.all_words);
-    //qDebug()<<"word_quantity:"<<word_quantity;
+    qDebug()<<"当前单词数量："<<word_quantity;
 }
 
 void DialogWordCard::set_current_index(qint32 word_index)

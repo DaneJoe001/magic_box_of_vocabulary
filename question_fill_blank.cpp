@@ -1,5 +1,5 @@
 #include "question_fill_blank.h"
-#include"ui_memorytestbyfillrandomblank.h"
+#include"ui_question_fill_blank.h"
 
 QuestionFillBlank::QuestionFillBlank(QWidget *parent) :
     QDialog(parent),
@@ -96,8 +96,7 @@ void QuestionFillBlank::set_word_label(QChar letter)
         }
         //拼接当前单词；
         answer.append(letter.toLower());
-        //在控制台展示信息；
-        //qDebug()<<QString("answer: %1,fill_position: %2").arg(answer).arg(fill_position);
+
         //当填充下标为目标单词长度时进行检查；
         if(fill_position==recent_word_length)
         {
@@ -121,7 +120,6 @@ void QuestionFillBlank::set_word_label(QChar letter)
 void QuestionFillBlank::set_dest_word()
 {
     recent_word_length=word.wordText.length();
-    //qDebug()<<QString("recent_word_length:%1").arg(recent_word_length);
     for(quint32 i=0;i<recent_word_length;i++)
     {
         labels[i]->show();
@@ -154,7 +152,7 @@ void QuestionFillBlank::clear_label()
     answer.clear();
     //重设当前单词位序；
     fill_position=0;
-    //qDebug()<<"Tabel clear!";
+    qDebug()<<"Clearing the blank_filling question pasge!";
 }
 
 void QuestionFillBlank::keyPressEvent(QKeyEvent *event)
@@ -172,7 +170,6 @@ void QuestionFillBlank::keyPressEvent(QKeyEvent *event)
     }
     else if(key==Qt::Key_Enter)
     {
-        //qDebug()<<"Push Enter!";
         set_word_label('#');
     }
 }

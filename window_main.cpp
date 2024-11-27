@@ -1,14 +1,13 @@
 #include<QSqlQuery>
 #include<QSqlError>
 #include "window_main.h"
-#include "ui_mainwindow.h"
+#include "ui_window_main.h"
 
 WindowMain::WindowMain(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    qDebug()<<"显示登录窗口";
     //显示登录窗口；
     login_panel.show();
 
@@ -16,7 +15,6 @@ WindowMain::WindowMain(QWidget *parent)
     connect(&login_panel,&DialogUserLogin::login_signal,this,[this]()
     {
         current_index=0;
-        qDebug()<<"打开主界面";
         //初始化资源管理器引用
         ResourceManager& manager_resource=ResourceManager::get_resource_manager();
         //显示主界面后关闭登录窗口；
@@ -31,8 +29,7 @@ WindowMain::WindowMain(QWidget *parent)
         //将展示列表初始化为所有单词；
         all_words=manager_resource.get_all_words();
         init_data_list(all_words);
-        qDebug()<<"单词数量"<<word_list.size();
-        qDebug()<<"0号单词"<<word_list[0].wordText;
+        qDebug()<<"Word count on main page:"<<word_list.size();
         show_WordCard(word_list[0]);
         ui->WordExplanation->setWordWrap(true);
         ui->WordExplanation->setFixedWidth(300);
@@ -53,8 +50,9 @@ WindowMain::WindowMain(QWidget *parent)
         }
         //显示单词合集信息列表；
         show_collection_item_list();
+        //！表格加载逻辑修改；
         //初始化单元格
-        show_word_list=manager_resource.get_all_words();
+        //show_word_list=manager_resource.get_all_words();
         set_word_table();
         //连接表格和槽函数
         QObject::connect(ui->tableWidget,&QTableWidget::cellClicked,this,&WindowMain::on_cellClicked);
@@ -66,7 +64,7 @@ WindowMain::WindowMain(QWidget *parent)
         dictionary.insert("柯林斯高阶英汉双解词典", "collins_dictionary");
         dictionary.insert("牛津高阶英汉双解词典", "oxford_dictionary");
         //需要使用原始字符串
-        QString word_content=word_database.get_word_content_from_dictionary("a","cam_bridge_dictionary");
+        QString word_content=word_database.get_word_content_from_dictionary("abandon","oxford_dictionary");
         ui->textBrowser->setHtml(word_content);
     });
 }
@@ -89,14 +87,11 @@ void WindowMain::init_by_collection(WordCollectionInfo collectionInfo)
 {
     qDebug()<<"Uploading table!";
     show_word_list.clear();
-    //qDebug()<<collectionInfo.word_quantity;
+    //在导入数据之前，重新从数据库加载以应用更改；
     word_database.init_collection_list();
-    //qDebug()<<"collectionInfo.wordIdList"<<collectionInfo.wordIdList.size();
     for(quint32 i=0;i<collectionInfo.word_quantity;i++)
     {
         show_word_list.append(all_words[(collectionInfo.wordIdList[i]-1)]);
-        //qDebug()<<"Index:"<<index;
-        //show_word_list.append(word_database.all_words[index]);
     }
     word_quantity=collectionInfo.word_quantity;
 }
@@ -111,7 +106,6 @@ void WindowMain::show_prev()
     {
         current_index=max_index;
     }
-    //qDebug()<<current_index;
     show_WordCard(word_list[current_index]);
 }
 
@@ -125,10 +119,6 @@ void WindowMain::show_next()
     {
         current_index=0;
     }
-    //qDebug()<<current_index;
-    qDebug()<<"主界面单词列表数量:"<<word_list.size();
-    qDebug()<<"current index"<<current_index;
-    qDebug()<<"current word"<<word_list[current_index].wordText;
     show_WordCard(word_list[current_index]);
 }
 
@@ -146,7 +136,8 @@ void WindowMain::show_WordCard(WordInfo word)
     //判断下标是否有效
     if(current_index>max_index)
     {
-        qDebug()<<"Invailed index!";
+        qDebug()<<"Current index which is trying to call:"<<current_index;
+        qDebug()<<"Error:Invailed index!";
         return;
     }
     //设置界面元素；
@@ -154,7 +145,7 @@ void WindowMain::show_WordCard(WordInfo word)
     ui->BritishPhoneticSymbol->setText(word.britishPhoneticSymbol);
     ui->AmericanPhoneticSymbol->setText(word.americanPhoneticSymbol);
     ui->WordExplanation->setText(word.wordExplanation);
-    qDebug()<<"收藏列表数量："<<word_database.collection_list.size();
+    qDebug()<<"Collection count："<<word_database.collection_list.size();
     //设置收藏复选框状态；
     if(word_database.is_exist_in_collection(word_database.collection_list[STAR_LIST],word))
     {
@@ -181,7 +172,7 @@ void WindowMain::show_collection_item_list()
 bool WindowMain::add_word_to_collection(WordCollectionInfo collection)
 {
     //调用单词数据库对象添加单词至指定列表；
-    qDebug()<<"当前单词ID:"<<current_index;
+    qDebug()<<"Recent wordID:"<<current_index;
     return word_database.add_word_to_collection(collection,word_list[current_index]);
 }
 
@@ -268,7 +259,6 @@ void WindowMain::on_SearchButton_clicked()
     WordInfo word=word_database.search_word(searchText);
     if(word.wordID==0)
     {
-        qDebug()<<"未找到！";
         QMessageBox::information(this,"结果","未找到");
         return;
     }
@@ -324,10 +314,9 @@ void WindowMain::list_item_clicked(QListWidgetItem *item)
         return;
     }
     //qDebug()<<"Collection Name:"<<word_database.collection_list[collectionID].collectionName;
-    qDebug()<<word_database.collection_list[1].tableName;
-    qDebug()<<word_database.collection_list[1].word_quantity;
-    qDebug()<<word_database.collection_list[1].wordIdList.size();
-
+    qDebug()<<word_database.collection_list[collection_current_index].tableName;
+    qDebug()<<word_database.collection_list[collection_current_index].word_quantity;
+    qDebug()<<word_database.collection_list[collection_current_index].wordIdList.size();
 
     init_by_collection(word_database.collection_list[collection_current_index]);
     set_word_table();
@@ -353,16 +342,12 @@ void WindowMain::on_pushButton_search_on_dictionary_clicked()
 {
     //word_database.close_database();
     QString dest_word=ui->lineEdit_word_dictionary->text();
-    qDebug()<<"查询的单词"<<dest_word;
+    qDebug()<<"The destination word:"<<dest_word;
     QString dest_dictionary=ui->comboBox_select_dictionary->currentText();
-    qDebug()<<"词典"<<dest_dictionary;
+    qDebug()<<"Recent dictionary:"<<dest_dictionary;
     QString table_name=dictionary.value(dest_dictionary);
 
     QString word_content=word_database.get_word_content_from_dictionary(dest_word,table_name);
-    //TODO:分离数据库操作逻辑，数据库操作只应该置于database_vocabulary
-
-    qDebug()<<"查询的数据表"<<table_name;
-
     ui->textBrowser->setHtml(word_content);
 
 }

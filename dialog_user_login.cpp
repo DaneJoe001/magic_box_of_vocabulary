@@ -2,7 +2,7 @@
 #include "dialog_user_login.h"
 #include "dialog_user_login.h"
 #include "dialog_user_registration.h"
-#include "ui_userlogin.h"
+#include "ui_dialog_user_login.h"
 
 
 UserInfo DialogUserLogin::current_user={-1,nullptr,nullptr,nullptr,nullptr,QDateTime(),QDateTime()};
@@ -27,10 +27,10 @@ bool DialogUserLogin::check_login_status()
 {
     QSqlQuery sql=QSqlQuery(database);
     //在数据库查询对应账号信息；
-    QString sqlStatement=QString("select * from user_info where user_account='%1';").arg(current_user.user_account);
-    if(!sql.exec(sqlStatement))
+    QString sql_statement=QString("select * from user_info where user_account='%1';").arg(current_user.user_account);
+    if(!sql.exec(sql_statement))
     {
-        qDebug()<<"Sql query failed!";
+        qDebug()<<"Failed to execute sql query!";
         return false;
     }
     //未查询到结果即返回；
@@ -66,22 +66,21 @@ void DialogUserLogin::update_login_time()
     }
     QSqlQuery sql(database);
 
-    QString sqlStatement =
+    QString sql_statement =
     QString("UPDATE user_info SET last_login_time = :last_login_time WHERE user_id = :userId");
 
     // 准备查询
-    if (!sql.prepare(sqlStatement)) {
+    if (!sql.prepare(sql_statement)) {
         qDebug() << "Failed to prepare SQL statement!";
         return;
     }
-
-    qDebug()<<sqlStatement;
     // 绑定参数值
     sql.bindValue(":last_login_time", QDateTime::currentDateTime().toString(Qt::ISODate));
     sql.bindValue(":userId", current_user.user_ID);
 
     // 执行查询
     if (!sql.exec()) {
+        qDebug()<<"The statement executing now:"<<sql_statement;
         qDebug() << "SQL query failed: " << sql.lastError().text();
         return;
     }
